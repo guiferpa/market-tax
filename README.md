@@ -113,3 +113,21 @@ integration too and both existing in the same source code.
 - **infra**: This directory's responsible for all app's external integration which it'll helpful to use cases process the app's input. In this case it was created a short data structure that'll localated in [pkg/storage](https://github.com/guiferpa/market-tax/tree/main/pkg/storage), this data structure's used for infra layer to instance a adapter and help use cases processing.
 
 - **pkg**: This directory's responsible for all app's modules that hasn't fit with hexagonal components. In this case we have a module called [pkg/storage](https://github.com/guiferpa/market-tax/tree/main/pkg/storage). In this case it serves to manage datas from buy/sell stock contexts.
+
+## Explanation about technical decisions
+
+### Choice of programming language
+
+I'll point reasons by the app requirements
+
+- **Must be a Command-Line Interface**: Go programming language's so friendly to work with this context because it's a compiled language then that helps to delivery the app.
+
+- **Must have tests**: Go programming language has built-in modules to handle auto test cases. That's interesting because it's not necessary install dependencies just for test context.
+
+- **Must work with JSON as input format**: Go programming language's not too friendly as JavaScript to work with JSON but it's a good solution given the module `json` built-in at language.
+
+- **Feel free to choose any programming language that let you confortable**: I've a expressive experience using Go programming language because of my career then I chose it because let me most comfortable to develop.
+
+### Choice of design pattern
+
+I chose the hexagonal architecture as design pattern because I like so much how it organize all contexts and let the business rule splitted from all the rest of layers, with this it's possible develop tests and extends others implementations by easier way.
