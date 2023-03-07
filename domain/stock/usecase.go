@@ -2,6 +2,8 @@ package stock
 
 import "fmt"
 
+const NO_TAX_LIMIT = 19_999_99
+
 type StockInvalidBuyError struct {
 	Quantity int
 	Cost     int
@@ -73,7 +75,7 @@ func (s *UseCaseService) Sell(quantity, cost int) (int, error) {
 	}
 
 	total := (quantity * cost)
-	hasGain := (cost > s.repository.GetWeightAverage())
+	hasGain := (cost > s.repository.GetWeightAverage() && total > NO_TAX_LIMIT)
 
 	s.repository.SetStockQuantity(s.repository.GetStockQuantity() - quantity)
 
@@ -82,7 +84,8 @@ func (s *UseCaseService) Sell(quantity, cost int) (int, error) {
 		return 0, nil
 	}
 
-	tax := calcTax(total - s.repository.GetFinancialLoss())
+	gain := (quantity * s.repository.GetWeightAverage()) - s.repository.GetFinancialLoss()
+	tax := calcTax(gain)
 	s.repository.SetFinancialLoss(0)
 	return tax, nil
 }
