@@ -1,11 +1,11 @@
 package stock
 
 type StockRepository interface {
-	GetAverage() int
-	SetAvarage(value int)
+	GetWeightAverage() int
+	SetWeightAvarage(value int)
 	SetFinancialLoss(value int)
 	GetFinancialLoss() int
-	GetStockQuantity()
+	GetStockQuantity() int
 	SetStockQuantity(value int)
 }
 
