@@ -19,3 +19,29 @@ func TestCalcTax(t *testing.T) {
 		}
 	}
 }
+
+func TestCalcWeightedAverage(t *testing.T) {
+	suite := []struct {
+		CurrentStockQuantity   int
+		CurrentWeightedAverage int
+		StockBoughtQuantity    int
+		BoughtStockUnitCost    int
+		Expected               int
+	}{
+		{5, 2000, 5, 1000, 1500},
+		{0, 0, 5, 200, 200},
+	}
+
+	for _, s := range suite {
+		params := calcWeightedAverageParams{
+			CurrentStockQuantity:   s.CurrentStockQuantity,
+			StockBoughtQuantity:    s.StockBoughtQuantity,
+			CurrentWeightedAverage: s.CurrentWeightedAverage,
+			BoughtStockUnitCost:    s.BoughtStockUnitCost,
+		}
+		if got, expected := calcWeightedAverage(params), s.Expected; got != expected {
+			t.Errorf("unexpected result for weighted average, got: %d, expected: %d", got, expected)
+			return
+		}
+	}
+}
