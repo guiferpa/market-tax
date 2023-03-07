@@ -55,6 +55,7 @@ type StockRepositoryMock struct {
 	NCalledSetStockQuantity int
 	NCalledGetStockQuantity int
 	StockQuantityResult     int
+	WeightAverageResult     int
 }
 
 func (m *StockRepositoryMock) SetWeightAvarage(value int) {
@@ -63,7 +64,7 @@ func (m *StockRepositoryMock) SetWeightAvarage(value int) {
 
 func (m *StockRepositoryMock) GetWeightAverage() int {
 	m.NCalledGetWeightAverage += 1
-	return 0
+	return m.WeightAverageResult
 }
 
 func (m *StockRepositoryMock) SetFinancialLoss(value int) {
@@ -132,6 +133,7 @@ func TestBuy(t *testing.T) {
 		ExpectedNCalledGetStockQuantity int
 	}{
 		{10, 5, 20, 15, 1, 1, 1, 2},
+		{0, 3, 8, 3, 1, 1, 1, 2},
 	}
 
 	for _, s := range suite {
@@ -167,6 +169,112 @@ func TestBuy(t *testing.T) {
 
 		if got, expected := mock.StockQuantityResult, s.ExpectedTotalStockQuantity; got != expected {
 			t.Errorf("unexpected for total of stock quantity, got; %v, expected: %v", got, expected)
+			return
+		}
+	}
+}
+
+func TestSell(t *testing.T) {
+	suite := []struct {
+		MockCurrentStockQuantity        int
+		MockCurrentWeightAverage        int
+		Quantity                        int
+		Cost                            int
+		ExpectedNCalledGetWeightAverage int
+		ExpectedNCalledSetStockQuantity int
+		ExpectedNCalledGetStockQuantity int
+		ExpectedNCallSetFinancialLoss   int
+		ExpectedNCallGetFinancialLoss   int
+		ExpectedTotalStockQuantity      int
+		ExpectedTax                     int
+	}{
+		{10, 15_00, 5, 20_00, 1, 1, 1, 1, 1, 5, 0_00},
+		{10, 20_00, 5, 20_00, 1, 1, 1, 1, 1, 5, 0_00},
+		{10, 10_00, 5, 20_00, 1, 1, 1, 1, 1, 5, 0_00},
+		{10_000, 10_00, 5_000, 20_00, 2, 1, 1, 1, 1, 5_000, 10_000_00},
+	}
+
+	for _, s := range suite {
+		mock := &StockRepositoryMock{
+			StockQuantityResult: s.MockCurrentStockQuantity,
+			WeightAverageResult: s.MockCurrentWeightAverage,
+		}
+		svc := &UseCaseService{repository: mock}
+
+		tax, err := svc.Sell(s.Quantity, s.Cost)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		if got, expected := tax, s.ExpectedTax; got != expected {
+			t.Errorf("unexpected tax value, got; %v, expected: %v", got, expected)
+			return
+		}
+
+		if got, expected := mock.NCalledGetWeightAverage, s.ExpectedNCalledGetWeightAverage; got != expected {
+			t.Errorf("unexpected N called GetWeightAverage, got; %v, expected: %v", got, expected)
+			return
+		}
+
+		if got, expected := mock.NCalledGetWeightAverage, s.ExpectedNCalledGetWeightAverage; got != expected {
+			t.Errorf("unexpected N called GetWeightAverage, got; %v, expected: %v", got, expected)
+			return
+		}
+
+		if got, expected := mock.NCalledSetStockQuantity, s.ExpectedNCalledSetStockQuantity; got != expected {
+			t.Errorf("unexpected N called SetStockQuantity, got; %v, expected: %v", got, expected)
+			return
+		}
+
+		if got, expected := mock.NCalledGetStockQuantity, s.ExpectedNCalledGetStockQuantity; got != expected {
+			t.Errorf("unexpected N called GetStockQuantity, got; %v, expected: %v", got, expected)
+			return
+		}
+
+		if got, expected := mock.StockQuantityResult, s.ExpectedTotalStockQuantity; got != expected {
+			t.Errorf("unexpected for total of stock quantity, got; %v, expected: %v", got, expected)
+			return
+		}
+	}
+}
+
+func TestSellWithInvalidQuantity(t *testing.T) {
+	suite := []struct {
+		Quantity int
+	}{
+		{0},
+		{-1000},
+	}
+
+	for _, s := range suite {
+		mock := &StockRepositoryMock{}
+		svc := &UseCaseService{repository: mock}
+
+		_, err := svc.Sell(s.Quantity, 1)
+
+		if got, expected := err, ErrStockBuyWithInvalidQuantity; !errors.Is(got, expected) {
+			t.Errorf("unexpected error, got: %v, expected %v", got, expected)
+			return
+		}
+	}
+}
+
+func TestSellWithInvalidCost(t *testing.T) {
+	suite := []struct {
+		Cost int
+	}{
+		{0},
+		{-1000},
+	}
+
+	for _, s := range suite {
+		mock := &StockRepositoryMock{}
+		svc := &UseCaseService{repository: mock}
+
+		_, err := svc.Sell(1, s.Cost)
+
+		if got, expected := err, ErrStockBuyWithInvalidCost; !errors.Is(got, expected) {
+			t.Errorf("unexpected error, got: %v, expected %v", got, expected)
 			return
 		}
 	}
