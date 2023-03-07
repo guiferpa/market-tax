@@ -74,10 +74,15 @@ func (s *UseCaseService) Sell(quantity, cost int) (int, error) {
 		return 0, ErrStockBuyWithInvalidCost
 	}
 
+	s.repository.SetStockQuantity(s.repository.GetStockQuantity() - quantity)
+
+	total := (quantity * cost)
+	if total < NO_TAX_LIMIT {
+		return 0, nil
+	}
+
 	gain := (quantity * cost) - (quantity * s.repository.GetWeightAverage())
 	hasLoss := gain < 1
-
-	s.repository.SetStockQuantity(s.repository.GetStockQuantity() - quantity)
 
 	if hasLoss {
 		s.repository.SetFinancialLoss(gain)
