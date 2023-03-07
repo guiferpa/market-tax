@@ -5,6 +5,11 @@
   - [Executing binary](#executing-binary)
   - [Containerizing binary](#containerizing-binary)
   - [Executing container with binary](#executing-container-with-binary)
+  
+- [Tasks](#tasks)
+  - [Running lint](#running-lint)
+  - [Running unit tests](#running-only-unit-tests)
+  - [Running integration tests](#running-all-tests-including-integration-tests)
 
 ## Get started
 
@@ -38,3 +43,24 @@ $ docker run -it market-tax
 [{"operation":"buy", "unit-cost":20.00, "quantity": 10000}, {"operation":"sell", "unit-cost":10.00, "quantity": 5000}]
 
 ```
+
+## Tasks
+
+> :balloon: This project has `Makefile` as job runner
+
+### Running lint
+```sh
+$ make lint
+```
+
+### Running only unit tests
+```sh
+$ make test
+```
+
+### Running all tests (including integration tests)
+```sh
+$ make integration
+
+```
+
