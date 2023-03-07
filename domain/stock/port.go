@@ -1,12 +1,12 @@
 package stock
 
 type StockRepository interface {
-	GetWeightAverage() int
 	SetWeightAvarage(value int)
+	GetWeightAverage() int
 	SetFinancialLoss(value int)
 	GetFinancialLoss() int
-	GetStockQuantity() int
 	SetStockQuantity(value int)
+	GetStockQuantity() int
 }
 
 type UserCase interface {
