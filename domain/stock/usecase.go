@@ -61,6 +61,32 @@ func (s *UseCaseService) Buy(quantity, cost int) error {
 	return nil
 }
 
+func (s *UseCaseService) Sell(quantity, cost int) (int, error) {
+	if quantity < 1 {
+		ErrStockBuyWithInvalidQuantity.Quantity = quantity
+		return 0, ErrStockBuyWithInvalidQuantity
+	}
+
+	if cost < 1 {
+		ErrStockBuyWithInvalidCost.Cost = cost
+		return 0, ErrStockBuyWithInvalidCost
+	}
+
+	total := (quantity * cost)
+	hasGain := (cost > s.repository.GetWeightAverage())
+
+	s.repository.SetStockQuantity(s.repository.GetStockQuantity() - quantity)
+
+	if !hasGain {
+		s.repository.SetFinancialLoss(total)
+		return 0, nil
+	}
+
+	tax := calcTax(total - s.repository.GetFinancialLoss())
+	s.repository.SetFinancialLoss(0)
+	return tax, nil
+}
+
 func NewUseCaseService() *UseCaseService {
 	return &UseCaseService{}
 }
