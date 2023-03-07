@@ -15,6 +15,10 @@
   - [Tree overview](#tree-overview)
   - [Concepts of source code arch](#concepts-of-source-code-arch)
 
+- [Explanation about technical decisions](#explanation-about-technical-decisions)
+  - [Choice of programming language](#choice-of-programming-language)
+  - [Choice of design pattern](#choice-of-design-pattern)
+
 ## Get started
 
 ### Build source code
