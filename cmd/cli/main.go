@@ -11,18 +11,6 @@ import (
 	"github/guiferpa/market-tax/infra/storage/memory"
 )
 
-func buildInput() ([]string, error) {
-	input := make([]string, 0)
-
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		text := scanner.Text()
-		input = append(input, text)
-	}
-
-	return input, nil
-}
-
 func main() {
 	input := make([][]cli.RequestPayload, 0)
 
