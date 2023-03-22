@@ -238,6 +238,29 @@ func TestSell(t *testing.T) {
 	}
 }
 
+func TestSellWithLowerStockBalance(t *testing.T) {
+	suite := []struct {
+		Quantity             int
+		CurrentStockQuantity int
+	}{
+		{10_000, 0},
+	}
+
+	for _, s := range suite {
+		mock := &StockRepositoryMock{
+			StockQuantityResult: s.CurrentStockQuantity,
+		}
+		svc := &UseCaseService{repository: mock}
+
+		_, err := svc.Sell(s.Quantity, 1)
+
+		if got, expected := err, ErrStockBalance; !errors.Is(got, expected) {
+			t.Errorf("unexpected error, got: %v, expected %v", got, expected)
+			return
+		}
+	}
+}
+
 func TestSellWithInvalidQuantity(t *testing.T) {
 	suite := []struct {
 		Quantity int

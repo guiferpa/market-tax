@@ -18,6 +18,17 @@ var (
 	ErrStockBuyWithInvalidCost     = &StockInvalidBuyError{}
 )
 
+type StockBalanceError struct {
+	CurrentStockQuantity int
+	SellStockQuantity    int
+}
+
+func (err *StockBalanceError) Error() string {
+	return fmt.Sprintf("low stock balance, current quantity equals %d", err.CurrentStockQuantity)
+}
+
+var ErrStockBalance = &StockBalanceError{}
+
 type UseCaseService struct {
 	repository StockRepository
 }
@@ -74,7 +85,13 @@ func (s *UseCaseService) Sell(quantity, cost int) (int, error) {
 		return 0, ErrStockBuyWithInvalidCost
 	}
 
-	s.repository.SetStockQuantity(s.repository.GetStockQuantity() - quantity)
+	stockQuantity := s.repository.GetStockQuantity()
+	if stockQuantity < quantity {
+		ErrStockBalance.CurrentStockQuantity = stockQuantity
+		return 0, ErrStockBalance
+	}
+
+	s.repository.SetStockQuantity(stockQuantity - quantity)
 
 	total := (quantity * cost)
 	if total < NO_TAX_LIMIT {

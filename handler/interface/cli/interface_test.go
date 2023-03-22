@@ -33,10 +33,7 @@ func TestCLIRun(t *testing.T) {
 		m := &MockStockUseCase{}
 		h := &Interface{usecase: m}
 
-		if _, err := h.Run([]RequestPayload{s.Payload}); err != nil {
-			t.Error(err)
-			return
-		}
+		h.Run([]RequestPayload{s.Payload})
 
 		if got, expected := m.NCalledBuy, s.ExpectedNCalledBuy; got != expected {
 			t.Errorf("unexpected N called buy, got: %v, expected: %v", got, expected)

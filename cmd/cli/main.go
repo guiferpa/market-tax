@@ -34,12 +34,9 @@ func main() {
 		service := stock.NewUseCaseService(storage)
 		cli := cli.NewInterface(service)
 
-		resp, err := cli.Run(payload)
-		if err != nil {
-			log.Println(err)
-		}
+		resp := cli.Run(payload)
 
-		if err = json.NewEncoder(os.Stdout).Encode(resp); err != nil {
+		if err := json.NewEncoder(os.Stdout).Encode(resp); err != nil {
 			log.Println(err)
 		}
 	}
